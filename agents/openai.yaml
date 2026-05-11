@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ctrip Holiday Roundtrip Optimizer"
+  short_description: "Compare Ctrip holiday flights near any city."
+  default_prompt: "Use $ctrip-holiday-roundtrip-optimizer to find cheap holiday round-trip flights from my city, nearby airports, or international split hubs."
