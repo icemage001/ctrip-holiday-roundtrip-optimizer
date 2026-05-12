@@ -63,6 +63,7 @@ node scripts/scan_holiday_roundtrips.js \
   --period 2027-spring-festival=2027-02-03:2027-02-09 \
   --min-save 800 \
   --min-save-rate 0.25 \
+  --grade 3 \
   --out output/ctrip-holiday-results.json
 ```
 
@@ -81,6 +82,19 @@ node scripts/scan_holiday_roundtrips.js \
   --out output/ctrip-europe-split-results.json
 ```
 
+Cabin/grade scan option:
+
+```bash
+node scripts/scan_holiday_roundtrips.js \
+  --dest MIL \
+  --base-origin SHA \
+  --origin SHA,HGH,NKG \
+  --period 2026-national-day=2026-09-29:2026-10-04 \
+  --grade 3 \
+  --out output/ctrip-milan-grade3-results.json
+```
+
+`--grade` is passed through to Ctrip's low-price calendar API. The script defaults to `--grade 3`, matching the original behavior. Treat cabin interpretation as API-dependent: verify any business-class or premium-cabin candidate on the rendered Ctrip result page before presenting it as confirmed.
 Use `--split-hubs default` for Tokyo, Osaka, Seoul, Busan, Fukuoka, and Nagoya. Override with explicit city or airport codes when the user names preferred hubs.
 
 The output JSON contains:

@@ -130,6 +130,7 @@ function parseArgs(argv) {
     splitHubs: [],
     baseOrigin: DEFAULT_BASE_ORIGIN,
     splitLayovers: [0, 1],
+    grade: 3,
     out: path.join(process.cwd(), 'ctrip-holiday-roundtrip-results.json'),
   };
 
@@ -161,6 +162,10 @@ function parseArgs(argv) {
       periods.push({ id, name: id, depStart, depEnd });
     } else if (key === '--min-save') args.minSave = Number(value);
     else if (key === '--min-save-rate') args.minSaveRate = Number(value);
+    else if (key === '--grade') {
+      args.grade = Number(value);
+      if (!Number.isFinite(args.grade)) throw new Error('--grade must be a number');
+    }
     else if (key === '--out') args.out = value;
   }
   if (periods.length) args.periods = periods;
@@ -216,12 +221,12 @@ function ctripDate(value) {
   return isoDate(shifted);
 }
 
-async function fetchCalendar(from, to) {
+async function fetchCalendar(from, to, grade) {
   const body = {
     departNewCityCode: from,
     arriveNewCityCode: to,
     startDate: isoDate(new Date()),
-    grade: 3,
+    grade,
     flag: 1,
     channelName: 'FlightIntlOnline',
     searchType: 2,
@@ -393,7 +398,7 @@ async function main() {
   const tasks = uniqueRoutes([...directRoutes, ...splitRoutes]);
 
   const routeResults = await mapLimit(tasks, 6, async (task, index) => {
-    const result = await fetchCalendar(task.from, task.to);
+    const result = await fetchCalendar(task.from, task.to, args.grade);
     console.error(`${index + 1}/${tasks.length} ${task.direction} ${task.from}-${task.to} ${Object.keys(result.prices).length} prices`);
     return { ...task, result };
   });
